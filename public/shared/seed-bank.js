@@ -1,7 +1,7 @@
-// Estimated answer popularity (% of players who would give each answer).
-// Format: [displayName, popularityPercent, ...aliases]
-// Answers that are valid but rare score the most points.
-window.QUESTIONS = [
+// Hand-written fallback prompts, used when no LLM-generated puzzle exists for a date
+// (local play, or before ANTHROPIC_API_KEY is configured).
+// Format: [answer, estimatedPercentOfPlayers, ...aliases]
+export const SEED_BANK = [
   {
     q: "Name a planet in our solar system",
     a: [

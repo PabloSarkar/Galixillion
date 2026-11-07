@@ -123,3 +123,22 @@ button { font: inherit; cursor: pointer; border: 0; border-radius: 10px; }
   .big-points { font-size: 36px; }
   .rules { font-size: 14px; }
 }
+
+/* ---- Tiers ---- */
+.tier-legend, .ladder { list-style: none; padding: 0; margin: 0 0 20px; }
+.tier-legend li, .ladder li {
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 10px;
+  padding: 6px 10px; border-radius: 8px; font-size: 14px; margin-bottom: 4px;
+  background: rgba(255,255,255,.04);
+}
+.tier-legend .pts, .ladder .pts { font-family: Orbitron, sans-serif; color: var(--accent); font-size: 13px; }
+.ladder .examples { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
+.ladder li.you { background: rgba(255,181,71,.16); outline: 1px solid rgba(255,181,71,.5); }
+.ladder li.gem .examples { color: var(--good); }
+.end-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.share-status { color: var(--good); font-size: 14px; }
+.primary:disabled { opacity: .5; cursor: default; }
+.feedback.pending { color: var(--muted); }
+
+#reveal-points { font-size: 30px; }
+@media (max-width: 760px) { #reveal-points { font-size: 24px; } }

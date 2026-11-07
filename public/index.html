@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmillion</title>
+<meta name="description" content="A daily rare-answer space trivia game. The rarer your answer, the higher your rocket flies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="sky"></canvas>
+
+<div id="hud">
+  <div class="hud-item"><span class="label">Altitude</span><span id="alt" class="value">0 km</span></div>
+  <div class="hud-item"><span class="label">Score</span><span id="score" class="value">0</span></div>
+  <div class="hud-item"><span class="label">Zone</span><span id="zone" class="value">Launchpad</span></div>
+</div>
+
+<main id="panel">
+  <section id="screen-start" class="screen active">
+    <h1>COSMILLION</h1>
+    <p class="tag" id="puzzle-label">Loading today's launch…</p>
+    <ul class="rules">
+      <li>7 prompts a day, the same for everyone. 25 seconds each.</li>
+      <li>Type <b>one</b> valid answer. <b>The fewer people who'd say it, the more points.</b></li>
+      <li>Points fuel your rocket — from the launchpad toward interstellar space.</li>
+    </ul>
+    <ol class="tier-legend" id="tier-legend"></ol>
+    <button id="btn-start" class="primary" disabled>Launch</button>
+    <p class="best" id="offline-note" hidden>Offline mode: playing a built-in puzzle.</p>
+  </section>
+
+  <section id="screen-q" class="screen">
+    <div class="round-row"><span id="round">Prompt 1 / 7</span><span id="timer-text">25</span></div>
+    <div class="timer"><div id="timer-bar"></div></div>
+    <h2 id="question">…</h2>
+    <form id="answer-form" autocomplete="off">
+      <input id="answer" type="text" placeholder="Type one answer…" maxlength="60" autocapitalize="off" spellcheck="false">
+      <button type="submit" class="primary" id="btn-fire">Fire</button>
+    </form>
+    <p id="feedback" class="feedback"></p>
+    <button id="btn-skip" class="ghost">Skip prompt</button>
+  </section>
+
+  <section id="screen-reveal" class="screen">
+    <p id="reveal-title" class="reveal-title"></p>
+    <div id="reveal-points" class="big-points"></div>
+    <p id="reveal-sub" class="reveal-sub"></p>
+    <h3>Answer sheet</h3>
+    <ol id="ladder" class="ladder"></ol>
+    <p id="reveal-total" class="rare-hint"></p>
+    <button id="btn-next" class="primary">Next prompt</button>
+  </section>
+
+  <section id="screen-end" class="screen">
+    <h1>MISSION COMPLETE</h1>
+    <p class="tag" id="end-zone"></p>
+    <div class="big-points" id="end-score"></div>
+    <p class="reveal-sub" id="end-alt"></p>
+    <ol id="summary" class="summary"></ol>
+    <div class="end-actions">
+      <button id="btn-share" class="primary">Share result</button>
+      <span id="share-status" class="share-status"></span>
+    </div>
+    <p class="best">New prompts every day.</p>
+  </section>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

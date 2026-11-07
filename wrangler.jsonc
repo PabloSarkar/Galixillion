@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cosmillion",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Static game files. /api/* is handled by the Worker first.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+
+  // Puzzles, answer sheets and cached judge verdicts.
+  // Create with: npx wrangler kv namespace create PUZZLES  — then paste the id here.
+  "kv_namespaces": [
+    { "binding": "PUZZLES", "id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID" }
+  ],
+
+  // Per-IP limit on live Claude judging (answers not on the sheet).
+  "ratelimits": [
+    { "name": "JUDGE_LIMITER", "namespace_id": "1001", "simple": { "limit": 20, "period": 60 } }
+  ],
+
+  // 00:05 UTC daily: generate the next two days' puzzles if missing.
+  "triggers": { "crons": ["5 0 * * *"] },
+
+  "vars": {
+    "MODEL": "claude-opus-5-5",
+    "JUDGE_MODEL": "claude-opus-5-5",
+    "REQUIRE_REVIEW": "false",
+    "LAUNCH_DATE": "2026-11-01"
+  },
+
+  "observability": { "enabled": true }
+}
