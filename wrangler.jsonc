@@ -15,7 +15,7 @@
   // Puzzles, answer sheets and cached judge verdicts.
   // Create with: npx wrangler kv namespace create PUZZLES  — then paste the id here.
   "kv_namespaces": [
-    { "binding": "PUZZLES", "id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID" }
+    { "binding": "PUZZLES", "id": "009399ae9baf4d6780601aa5c71f7cf2" }
   ],
 
   // Per-IP limit on live Claude judging (answers not on the sheet).
