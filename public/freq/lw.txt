@@ -1,0 +1,26 @@
+610 lw
+703 lwr
+709 lwin
+714 lwa lwb
+716 lwt
+733 lws
+740 lwf
+741 lwd
+744 lwc lwow
+750 lwe
+754 lwaxana
+756 lwop
+757 lwp lwv
+759 lwo
+767 lwl
+771 lwrs
+772 lwów
+773 lw2
+777 lww
+785 lwir
+786 lways
+787 lwcf
+789 lwn
+790 lwazi
+792 lwanga
+795 lwg

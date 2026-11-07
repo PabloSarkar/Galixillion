@@ -1,0 +1,42 @@
+557 tp
+576 tpp
+616 tps
+627 tpa
+641 tpc
+653 tpb
+654 tpm
+668 tpg tph tpu
+672 tpd
+675 tpi
+681 tplf tpr
+687 tpe
+691 tpo
+694 tpn
+695 tpt
+696 tpl
+710 tp00
+718 tpms
+720 tpab
+730 tpk
+731 tpf
+732 tpv
+742 tpvs
+748 tptb
+749 tpx
+750 tpas
+755 tpy
+758 tppa
+766 tpj
+767 tp000 tpw
+771 tpp's
+773 tpos
+781 tpke
+784 tpac
+787 tp2
+788 tpes
+789 tprs
+791 tp1
+792 tp's tpa's tpus tpwd
+794 tping
+797 tpcc tpusa
+798 tp'd

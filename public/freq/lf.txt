@@ -1,0 +1,26 @@
+560 lf
+654 lfc
+669 lfl
+673 lfs
+678 lfa
+685 lfo
+690 lfg
+691 lfp
+713 lft
+714 lfe lfw
+715 lfb
+720 lfr
+722 lff
+731 lfm
+735 lfi
+751 lfd
+755 lfts
+757 lfn
+764 lfos
+777 lftr
+778 lfls
+781 lfpr
+788 lfsr lfy
+791 lf1
+796 lf00
+799 lfk

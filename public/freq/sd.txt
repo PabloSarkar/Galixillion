@@ -1,0 +1,60 @@
+511 sd
+598 sds
+600 sdf
+614 sdn
+615 sdk
+623 sdi
+642 sda sdr
+644 sdp
+645 sdgs
+646 sdl
+652 sdlp
+655 sdc
+659 sdsu
+662 sdg
+668 sdcc
+677 sdh
+679 sde
+686 sdm
+688 sdb
+693 sdhc sdo
+696 sd00
+697 sderot
+700 sdd
+701 sdram
+702 sdu
+715 sdny
+716 sdt
+718 sdv
+721 sdxc
+722 sdlc
+723 sdss
+727 sdks sdrs
+732 sd000
+735 sdlt
+743 sdx
+746 sdcard
+752 sd's
+754 sdot
+757 sd1
+759 sdds
+760 sdsm
+764 sd2 sdio
+765 sddc sdma
+766 sdes sdtv
+768 sdsu's
+772 sdsr
+774 sdsc
+775 sdas
+777 sdw
+780 sdr2
+785 sd3
+787 sdcs
+788 sdk's
+789 sdhs sdpd sdz
+791 sdpi
+792 sdet sdf's sdwa
+793 sd0000 sdms sdq
+794 sdos
+796 sdj sdrc
+799 sd9

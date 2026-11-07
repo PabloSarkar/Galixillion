@@ -1,0 +1,35 @@
+578 vm
+615 vmware
+628 vms
+648 vmas
+655 vma
+685 vmi
+702 vmax
+704 vmc
+722 vmm
+730 vmro
+731 vme
+734 vmp
+735 vmt
+736 vm's
+743 vmf
+744 vmr
+747 vmd
+751 vma's
+752 vmworld
+756 vmware's
+760 vmo
+766 vml
+767 vmg
+769 vmx
+774 vmotion
+775 vmat
+777 vmebus
+781 vmu
+783 vmfa
+784 vmin vmk
+786 vman
+789 vmh vmpfc
+791 vmos
+797 vmac
+799 vmdk vmw

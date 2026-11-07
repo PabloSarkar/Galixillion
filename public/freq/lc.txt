@@ -1,0 +1,54 @@
+548 lc
+553 lcd
+609 lcs
+648 lcc
+653 lca
+665 lcp
+669 lcm
+674 lcl lcr
+683 lcds
+696 lck
+697 lci
+700 lcbo
+702 lct
+704 lce lch lcms
+718 lcb
+719 lcf lcn
+720 lcpl
+722 lcg
+724 lccn lcv
+725 lc00
+727 lcu
+729 lcdr
+731 lchf
+735 lco lcoe
+740 lcy
+744 lcsw
+749 lccs
+757 lcls lcol lcos
+758 lcac
+760 lcw
+762 lc3
+764 lcps
+765 lchs
+767 lc's
+768 lccc
+769 lc000
+772 lcas
+773 lc9
+774 lcis
+776 lcss
+778 lcia
+779 lcgs
+780 lc2 lcme lcra
+781 lcd's
+783 lcfc lcmv
+785 lcci
+787 lcat lcx
+790 lcdc lcq
+791 lcsh
+792 lc1 lcca
+793 lcvp
+794 lcwr
+797 lcfs
+799 lcts lcvs

@@ -1,0 +1,11 @@
+620 1tb
+671 1t
+698 1th
+728 1the
+742 1tsp
+752 1tbsp
+771 1to
+783 1td
+784 1this
+789 1trillion
+790 1tr

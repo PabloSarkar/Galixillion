@@ -1,0 +1,15 @@
+615 qe
+657 qed
+694 qe2
+726 qeii qemu
+732 qe3
+737 qew
+756 qet
+761 qep
+763 qe1
+771 qes
+775 qe4
+778 qena
+794 qeh
+795 qec
+796 qeshm

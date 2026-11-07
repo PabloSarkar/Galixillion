@@ -1,0 +1,26 @@
+546 hk
+693 hkd
+703 hks
+706 hkt
+727 hkg
+729 hku
+734 hk00 hk000
+735 hksar
+744 hk's
+747 hka
+753 hkl
+757 hkt00
+762 hkex
+766 hkma hkust
+772 hke
+773 hklm
+779 hkm
+784 hkbp hkey_local_machine
+785 hki
+787 hkia
+788 hkr hktdc
+790 hkw
+791 hkn
+794 hkers
+798 hkfp hkfs
+799 hkc

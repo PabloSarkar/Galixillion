@@ -1,0 +1,9 @@
+620 qf
+725 qft
+735 qfs
+739 qfd
+757 qfc
+773 qf00
+790 qfx
+797 qfp
+799 qfes

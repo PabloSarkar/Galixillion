@@ -1,0 +1,30 @@
+568 bg
+644 bgs
+661 bgc
+671 bgp
+673 bgm
+687 bga
+697 bgr
+699 bgn
+705 bgt
+706 bge
+712 bg's
+713 bgsu
+719 bgb
+722 bgl
+724 bgg bgo
+726 bgi
+730 bgh
+745 bg2
+750 bgcolor
+761 bgd
+762 bgf
+770 bgu
+774 bgan bgw
+777 bg5
+780 bgy
+781 bgv
+792 bgms
+795 bgk
+796 bg00
+798 bgen

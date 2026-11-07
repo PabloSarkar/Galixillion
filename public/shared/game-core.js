@@ -3,28 +3,7 @@ import { SEED_BANK } from "./seed-bank.js";
 
 export const PROMPTS_PER_DAY = 7;
 export const ROUND_SECONDS = 25;
-
-// Six fixed rarity tiers. Perfect run = 7 × 100 = 700 points.
-export const TIERS = [
-  null,
-  { id: 1, name: "Stardust",            points: 10,  blurb: "Everyone said it." },
-  { id: 2, name: "Too Clever",          points: 15,  blurb: "You thought it was rare. So did everyone else." },
-  { id: 3, name: "Orbiter",             points: 30,  blurb: "Solid, but plenty of crews got there." },
-  { id: 4, name: "Rare",                points: 60,  blurb: "Few people thought of that." },
-  { id: 5, name: "Deep Space",          points: 85,  blurb: "Almost nobody went there." },
-  { id: 6, name: "One in a Cosmillion", points: 100, blurb: "The curated gem for this prompt." },
-];
 export const MAX_SCORE = PROMPTS_PER_DAY * 100;
-
-// Map an estimated share of players (percent) to a tier. Tier 6 is reserved for the curated gem.
-export function tierFor({ share, too_clever = false, gem = false }) {
-  if (gem) return 6;
-  if (too_clever && share >= 1) return 2;
-  if (share >= 5) return 1;
-  if (share >= 1) return 3;
-  if (share >= 0.2) return 4;
-  return 5;
-}
 
 // ---------- Answer matching ----------
 const STRIP_WORDS = ["space telescope", "telescope", "constellation", "galaxy", "spacecraft", "rocket", "rover", "mission", "probe", "the", "a", "an"];
@@ -63,7 +42,7 @@ function levenshtein(a, b) {
   return dp[b.length];
 }
 
-/** Find the sheet entry for a typed answer: exact/alias match first, then small typos. */
+/** Offline/no-LLM validator: find a typed answer in a known answer list (aliases, small typos). */
 export function matchAnswer(sheet, input) {
   const ins = variants(input);
   if (!ins.length) return null;
@@ -83,15 +62,6 @@ export function matchAnswer(sheet, input) {
   return best;
 }
 
-/** Example answers per tier, shown after a prompt is answered. */
-export function revealFor(sheet, perTier = 2) {
-  const tiers = {};
-  for (const a of sheet.answers) (tiers[a.tier] ||= []).push(a.answer);
-  const out = {};
-  for (const t of Object.keys(tiers)) out[t] = tiers[t].slice(0, perTier);
-  return { gem: sheet.gem, total: sheet.answers.length, examples: out };
-}
-
 // ---------- Seed puzzles (no LLM) ----------
 function hashString(s) {
   let h = 2166136261;
@@ -102,20 +72,27 @@ function seededRandom(seed) {
   return () => { seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t ^= t + Math.imul(t ^ (t >>> 7), 61 | t); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
 
-export function seedSheet(entry) {
-  const total = entry.a.reduce((s, x) => s + x[1], 0);
-  const answers = entry.a.map(([answer, weight, ...aliases]) => ({ answer, aliases, share: +((weight / total) * 100).toFixed(3), too_clever: false }));
-  answers.sort((x, y) => y.share - x.share);
-  const gem = answers[answers.length - 1].answer; // rarest stands in for the curated pick
-  for (const a of answers) a.tier = tierFor({ ...a, gem: a.answer === gem });
-  return { text: entry.q, category: "space", answers, gem };
+function seedId(date, i) {
+  const hex = [0, 1, 2, 3].map((k) => hashString(`${date}#${i}#${k}`).toString(16).padStart(8, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-a${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+}
+
+/** Turn a seed-bank entry into a Daily Dive prompt. `answers` is only used to validate when no LLM is configured. */
+export function seedPrompt(entry, id) {
+  return {
+    id,
+    prompt: entry.q,
+    category: entry.category,
+    strict_criteria: entry.criteria,
+    answers: entry.a.map(([answer, , ...aliases]) => ({ answer, aliases })),
+  };
 }
 
 export function seedPuzzle(date) {
   const rand = seededRandom(hashString(date));
   const pool = SEED_BANK.slice();
   for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-  return { date, source: "seed", status: "live", prompts: pool.slice(0, PROMPTS_PER_DAY).map(seedSheet) };
+  return { v: 2, date, source: "seed", status: "live", prompts: pool.slice(0, PROMPTS_PER_DAY).map((e, i) => seedPrompt(e, seedId(date, i))) };
 }
 
 // ---------- Altitude ----------

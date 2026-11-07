@@ -1,6 +1,5 @@
-import {
-  TIERS, ROUND_SECONDS, PROMPTS_PER_DAY, MAX_SCORE, ZONES, zoneFor, kmFor, formatKm, matchAnswer, revealFor, seedPuzzle,
-} from "./shared/game-core.js";
+import { ROUND_SECONDS, PROMPTS_PER_DAY, MAX_SCORE, ZONES, zoneFor, kmFor, formatKm, matchAnswer, seedPuzzle } from "./shared/game-core.js";
+import { RARITY_TIERS, sanitize, createFrequencyIndex, scoreAnswer } from "./shared/zipf.js";
 
 // ---------- Helpers ----------
 const $ = (id) => document.getElementById(id);
@@ -19,11 +18,16 @@ function localDate() {
 }
 
 // ---------- Backend (with offline fallback) ----------
-// Online: the Worker holds the answer sheets and scores answers. Offline (opened as a file,
-// or the API is down): score locally against a built-in seed puzzle.
+// Online: the Worker validates answers with Claude and scores them by corpus frequency.
+// Offline (static hosting, or the API is down): validate against the built-in answer lists
+// and score with the same frequency data, loaded from /freq.
 const api = {
   offline: false,
   local: null,
+  freq: createFrequencyIndex(async (path) => {
+    const r = await fetch(`freq/${path}`);
+    return r.ok ? r.text() : null;
+  }),
   async daily(date) {
     try {
       const r = await fetch(`/api/daily?date=${date}`);
@@ -32,23 +36,18 @@ const api = {
     } catch {
       this.offline = true;
       this.local = seedPuzzle(date);
-      return { date, number: null, source: "seed", prompts: this.local.prompts.map((s, index) => ({ index, text: s.text })) };
+      return { date, number: null, source: "seed", prompts: this.local.prompts.map((p, index) => ({ index, id: p.id, prompt: p.prompt, category: p.category })) };
     }
   },
   async answer(date, index, answer) {
     if (this.offline) {
-      const hit = matchAnswer(this.local.prompts[index], answer);
-      return hit
-        ? { accepted: true, answer: hit.answer, tier: hit.tier, tierName: TIERS[hit.tier].name, points: TIERS[hit.tier].points, source: "sheet" }
-        : { accepted: false, reason: "not_on_sheet" };
+      const clean = sanitize(answer);
+      if (!matchAnswer(this.local.prompts[index], clean)) return { valid: false, reason: "Not on our star charts." };
+      return { valid: true, answer: clean, ...(await scoreAnswer(this.freq, clean)) };
     }
     const r = await fetch("/api/answer", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ date, index, answer }) });
-    if (!r.ok) return { accepted: false, reason: "error" };
+    if (!r.ok) return { valid: false, reason: "Signal lost. Try again." };
     return r.json();
-  },
-  async reveal(date, index) {
-    if (this.offline) return revealFor(this.local.prompts[index]);
-    try { const r = await fetch(`/api/reveal?date=${date}&index=${index}`); return r.ok ? r.json() : null; } catch { return null; }
   },
 };
 
@@ -63,7 +62,7 @@ const state = {
   locked: false,
   pending: false,
 };
-const saveKey = () => `cosmillion:${state.puzzle.date}`;
+const saveKey = () => `cosmillion:v2:${state.puzzle.date}`;
 const save = () => store.set(saveKey(), { round: state.round, score: state.score, results: state.results });
 
 function showScreen(id) {
@@ -71,8 +70,8 @@ function showScreen(id) {
 }
 
 async function init() {
-  $("tier-legend").innerHTML = TIERS.slice(1).reverse()
-    .map((t) => `<li><span>${escapeHtml(t.name)}</span><span class="pts">${t.points}</span></li>`).join("");
+  $("tier-legend").innerHTML = RARITY_TIERS.slice().reverse()
+    .map((t) => `<li><span>${escapeHtml(t.name)}</span><span class="pts">${t.min}–${t.max}</span></li>`).join("");
   state.puzzle = await api.daily(localDate());
   $("puzzle-label").textContent = state.puzzle.number
     ? `Launch #${state.puzzle.number} · ${state.puzzle.date}`
@@ -99,7 +98,7 @@ function nextRound() {
   state.pending = false;
   state.timeLeft = ROUND_SECONDS;
   $("round").textContent = `Prompt ${state.round + 1} / ${PROMPTS_PER_DAY}`;
-  $("question").textContent = prompt.text;
+  $("question").textContent = prompt.prompt;
   $("answer").value = "";
   $("answer").disabled = false;
   $("btn-fire").disabled = false;
@@ -128,15 +127,6 @@ function setFeedback(text, kind = "") {
   $("feedback").className = `feedback ${kind}`;
 }
 
-const REJECTIONS = {
-  not_on_sheet: (a) => `“${a}” isn't on our star charts. Try another.`,
-  invalid: (a) => `Mission control says “${a}” doesn't fit. Try another.`,
-  rate_limited: () => "Too many checks at once. Try an answer from the charts.",
-  judge_unavailable: () => "Couldn't reach mission control for that one. Try another.",
-  empty: () => "Type an answer first.",
-  error: () => "Signal lost. Try again.",
-};
-
 async function submitAnswer(e) {
   e.preventDefault();
   if (state.locked || state.pending) return;
@@ -147,13 +137,13 @@ async function submitAnswer(e) {
   $("btn-fire").disabled = true;
   setFeedback("Checking with mission control…", "pending");
   let res;
-  try { res = await api.answer(state.puzzle.date, state.round, text); } catch { res = { accepted: false, reason: "error" }; }
+  try { res = await api.answer(state.puzzle.date, state.round, text); } catch { res = { valid: false, reason: "Signal lost. Try again." }; }
   state.pending = false;
   if (state.locked) return;
-  if (res.accepted) return finishRound(res, "answer");
+  if (res.valid) return finishRound({ ...res, typed: text }, "answer");
   $("answer").disabled = false;
   $("btn-fire").disabled = false;
-  setFeedback((REJECTIONS[res.reason] || REJECTIONS.not_on_sheet)(text), "bad");
+  setFeedback(`“${text}” — ${res.reason || "doesn't fit."} Try another.`, "bad");
   const input = $("answer");
   input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake");
   input.focus(); input.select();
@@ -168,35 +158,33 @@ async function finishRound(res, reason) {
   const points = res ? res.points : 0;
   const prevZone = zoneFor(state.score);
   state.score += points;
-  state.results.push({ text: prompt.text, answer: res ? res.answer : null, tier: res ? res.tier : 0, points });
+  state.results.push({ text: prompt.prompt, answer: res ? res.typed : null, tier: res ? res.tier : 0, points });
   save();
 
   $("reveal-title").innerHTML = res
-    ? `You said <b>${escapeHtml(res.answer)}</b>${res.source === "judge" ? " — verified by mission control" : ""}.`
+    ? `You said <b>${escapeHtml(res.typed)}</b>. ${escapeHtml(res.label)}`
     : reason === "timeout" ? "Out of time — engines stayed cold." : "Prompt skipped.";
   $("reveal-points").textContent = res ? `${res.tierName} · +${points}` : "+0";
   $("reveal-points").classList.toggle("zero", !points);
-  $("reveal-sub").textContent = res ? TIERS[res.tier].blurb : "";
+  $("reveal-sub").textContent = !res ? ""
+    : res.inVocabulary
+      ? `Corpus frequency: Zipf ${res.zipf.toFixed(2)}. Rarer than ${Math.round(res.percentile)}% of English words.`
+      : "Not found in the word-frequency corpus: maximum rarity.";
   const newZone = zoneFor(state.score);
   if (newZone !== prevZone) setTimeout(() => { $("reveal-sub").textContent += ` Heading for ${newZone.name}!`; }, 900);
   $("btn-next").textContent = state.results.length >= PROMPTS_PER_DAY ? "See mission report" : "Next prompt";
-  $("ladder").innerHTML = "";
-  $("reveal-total").textContent = "";
+  renderLadder(res ? res.tier : 0);
   showScreen("screen-reveal");
   scene.flyTo(state.score);
-
-  const reveal = await api.reveal(state.puzzle.date, state.round);
-  if (reveal) renderLadder(reveal, res ? res.tier : 0);
 }
 
-function renderLadder(reveal, yourTier) {
-  $("ladder").innerHTML = TIERS.slice(1).reverse().map((t) => {
-    const ex = t.id === 6 ? [reveal.gem] : (reveal.examples[t.id] || []);
+function renderLadder(yourTier) {
+  $("ladder").innerHTML = RARITY_TIERS.slice().reverse().map((t) => {
     const cls = [t.id === yourTier ? "you" : "", t.id === 6 ? "gem" : ""].join(" ");
-    return `<li class="${cls}"><span>${escapeHtml(t.name)}${t.id === yourTier ? " (you)" : ""}</span><span class="pts">${t.points}</span>
-      <span class="examples">${ex.length ? ex.map(escapeHtml).join(", ") : "—"}</span></li>`;
+    return `<li class="${cls}"><span>${escapeHtml(t.name)}${t.id === yourTier ? " (you)" : ""}</span><span class="pts">${t.min}–${t.max}</span>
+      <span class="examples">${escapeHtml(t.band)}</span></li>`;
   }).join("");
-  $("reveal-total").textContent = `${reveal.total} answers on the sheet.`;
+  $("reveal-total").textContent = "Scored by how rarely your answer's words appear in English text (wordfreq corpus).";
 }
 
 function endGame() {

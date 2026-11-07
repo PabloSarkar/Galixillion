@@ -1,0 +1,8 @@
+627 vx
+750 vxi
+752 vxr
+753 vxx
+763 vx000
+764 vx0000
+791 vxworks
+792 vxlan

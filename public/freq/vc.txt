@@ -1,0 +1,35 @@
+547 vc
+605 vcr
+629 vcs
+632 vcu
+671 vce
+675 vcrs
+685 vca
+686 vcc
+687 vcd
+692 vch
+698 vco
+700 vct
+714 vcf
+716 vcm
+718 vcp
+721 vci vcl
+724 vcenter
+725 vc's
+733 vcds
+741 vc00
+744 vcard
+745 vcat vcjd
+755 vcloud
+757 vcg vcore
+758 vcam vcsel vcu's
+762 vcv
+764 vcr's
+771 vcb
+774 vcos
+776 vcn vcsels vcts
+781 vcas
+786 vc1
+791 vc2
+797 vcal
+799 vcom

@@ -4,38 +4,71 @@ A daily rare-answer space trivia game. Everyone gets the same 7 prompts per day 
 answer to each. **The fewer players who would give your answer, the more points you get**, and your points fly
 your rocket from the launchpad toward interstellar space.
 
-Runs on **Cloudflare Workers** (static assets + KV + Cron Triggers), with **Claude** writing prompts, building
-answer sheets and judging answers that aren't on the sheet.
+Runs on **Cloudflare Workers** (static assets + KV + Cron Triggers). **Claude** writes the daily prompts and
+validates answers, and a **word-frequency corpus** scores how rare each answer is.
 
 ## How it works
 
-The workflow follows how rare-answer games like this are run: answers are scored against a pre-built answer sheet,
-not against a live count of what other players typed.
+### 1. Question generation: the Daily Dive
 
-1. **Prompts (daily cron, 00:05 UTC).** Claude writes 7 prompts for each of the next two days, avoiding recent ones.
-2. **Answer sheets.** For each prompt, Claude lists 80–200 valid answers with aliases, an estimated share of players
-   who would type each one, a "too clever" flag, and one curated **gem**.
-3. **Tiers.** The share is turned into a fixed tier in code, so scoring stays consistent:
+A daily cron (00:05 UTC) asks Claude Opus for the next two days' dives: exactly 7 unique prompts, each stored in KV as
 
-   | Tier | Points | Rule |
-   |---|---|---|
-   | One in a Cosmillion | 100 | the curated gem |
-   | Deep Space | 85 | under 0.2% of players |
-   | Rare | 60 | 0.2–1% |
-   | Orbiter | 30 | 1–5% |
-   | Too Clever | 15 | sounds rare, but many people pick it to be clever |
-   | Stardust | 10 | 5% or more |
+```json
+{
+  "id": "uuid",
+  "prompt": "Name a fabric or textile",
+  "category": "Textiles",
+  "strict_criteria": "The answer must be a raw material, weave, or fabric type recognized in linguistic text corpora. Do not accept brand names unless requested."
+}
+```
 
-   A perfect run is 700 points.
-4. **Scoring is server-side.** Answer sheets stay in KV and never reach the browser before you answer. The Worker
-   matches answers by alias, ignoring case, punctuation and "the", and tolerates small typos.
-5. **Answers missing from the sheet** go to Claude as a judge, which checks validity and estimates rarity. A judged
-   answer can reach Deep Space (85) but never the gem tier. Verdicts are cached in KV, so everyone who types the
-   same answer gets the same score. Calls are rate-limited per IP.
-6. **Human review (optional).** Puzzles are generated two days ahead. Set `REQUIRE_REVIEW` to `"true"` to hold them
-   as drafts until you publish them through the admin API.
-7. **No API key?** The game falls back to the built-in puzzles in `public/shared/seed-bank.js`. If the API can't be
-   reached at all (for example on plain static hosting), the browser scores locally against those same puzzles.
+Prompts are open-ended but deterministic: every answer is objectively right or wrong. Players never see
+`strict_criteria`; it is only for the validator.
+
+### 2. Validation engine (synchronous, per guess)
+
+- **A. Sanitize:** trim whitespace and lowercase.
+- **B. Validate with an LLM:** the answer, the prompt and `strict_criteria` go to Claude Haiku, a fast,
+  low-cost model acting as a strict binary evaluator. It returns `{ "valid": true }` or
+  `{ "valid": false, "reason": "..." }`. Misspellings count as invalid; otherwise a typo would look
+  "rare" to the frequency scorer.
+- **C. Acceptance loop:** an invalid answer returns at once with `retry: true`, so the player can guess again
+  before the 25-second clock runs out. A valid answer goes on to scoring.
+
+Verdicts are cached per prompt and answer, so the same guess always gets the same result.
+
+### 3. Grading: Zipf-law mechanical scoring
+
+No live player counts are used. Each valid answer gets a frequency rating from the
+[wordfreq](https://github.com/rspeer/wordfreq) English list: 321,180 words, built from Wikipedia, subtitles,
+Google Books, news and web text.
+
+- **Zipf value:** log10 of occurrences per billion words. For example, "the" is 7.7, "France" 4.9, "sackbut" 1.4.
+- **Multi-word answers** combine as `1/f = Σ 1/f_i`, so a phrase is never more common than its rarest word.
+- **Rank percentile:** the Zipf value converts to a rank percentile across the vocabulary (0 = most common).
+  The percentile picks a tier, and points scale linearly within the tier's band:
+
+| Tier | Rank percentile | Points | Badge |
+|---|---|---|---|
+| Stardust | most common 5% | 4–10 | "Stardust Choice!" |
+| Too Clever | 5–15% | 11–20 | "Crowd Trap!" |
+| Orbiter | 15–40% | 21–40 | "Orbiter Tier" |
+| Rare | 40–75% | 41–65 | "Rare Find!" |
+| Deep Space | 75–95% | 66–85 | "Deep Space!" |
+| One in a Cosmillion | rarest 5%, or not in the corpus | 86–100 | "ONE IN A COSMILLION!" |
+
+Examples: France 4 pts, Bhutan 14, Burkina Faso 17, Kerberos 29, sousaphone 45, sackbut 55, ophicleide 100.
+The tier table lives in `public/shared/zipf.js` (`RARITY_TIERS`).
+
+The frequency list ships as about 1,260 small static files in `public/freq/`, split by each word's first two
+letters. The Worker loads only the files an answer needs, so lookups are cheap and there's no database. To
+rebuild the files from wordfreq, run `pip install wordfreq msgpack` and then `python3 scripts/build-freq.py`.
+
+### Fallbacks
+
+- **No `ANTHROPIC_API_KEY`:** the game serves built-in dives (`public/shared/seed-bank.js`) and validates against
+  their answer lists.
+- **No API at all** (plain static hosting): the browser does the same and scores with the same frequency files.
 
 ## Deploy to Cloudflare
 
@@ -95,37 +128,36 @@ All admin calls need `Authorization: Bearer <ADMIN_TOKEN>`.
 
 | Method | Path | What it does |
 |---|---|---|
-| `POST` | `/api/admin/generate?date=YYYY-MM-DD[&force=true]` | Generate a puzzle with Claude |
-| `GET` | `/api/admin/puzzle?date=YYYY-MM-DD` | Full puzzle, including answer sheets, for review |
-| `PUT` | `/api/admin/puzzle?date=YYYY-MM-DD` | Replace a puzzle after hand edits; a missing `tier` is recomputed from `share` |
+| `POST` | `/api/admin/generate?date=YYYY-MM-DD[&force=true]` | Generate a Daily Dive with Claude |
+| `GET` | `/api/admin/dive?date=YYYY-MM-DD` | Full dive, including `strict_criteria`, for review |
+| `PUT` | `/api/admin/dive?date=YYYY-MM-DD` | Replace a dive (7 unique prompts; a missing `id` is assigned automatically) |
 | `POST` | `/api/admin/publish?date=YYYY-MM-DD` | Publish a draft |
 
 ## Public API
 
 | Method | Path | Returns |
 |---|---|---|
-| `GET` | `/api/daily?date=YYYY-MM-DD` | Prompt texts only. Players can request UTC yesterday through tomorrow, to cover every time zone |
-| `POST` | `/api/answer` `{date, index, answer}` | `{accepted, answer, tier, tierName, points, source}` or `{accepted: false, reason}` |
-| `GET` | `/api/reveal?date=&index=` | The gem plus example answers for each tier |
+| `GET` | `/api/daily?date=YYYY-MM-DD` | `{date, number, tiers, prompts: [{index, id, prompt, category}]}` |
+| `POST` | `/api/answer` `{date, index, answer}` | Invalid: `{valid: false, reason, retry: true}`. Valid: `{valid: true, answer, tier, tierName, label, points, zipf, percentile, inVocabulary, tokens}` |
 
 ## Configuration (`wrangler.jsonc` → `vars`)
 
-- `MODEL` writes prompts and sheets; `JUDGE_MODEL` judges answers. Both default to `claude-opus-5-5`.
-- `THEME` overrides the prompt theme.
-- `REQUIRE_REVIEW` holds generated puzzles as drafts when set to `"true"`.
-- `LAUNCH_DATE` is day #1 for puzzle numbering.
+- `GENERATOR_MODEL` writes the daily prompts. Default `claude-opus-5-5`.
+- `VALIDATOR_MODEL` checks every guess. Default `claude-haiku-5-5`.
+- `THEME` overrides the prompt theme. The default is space.
+- `REQUIRE_REVIEW` holds generated dives as drafts until published, when set to `"true"`.
+- `LAUNCH_DATE` is day #1 for numbering.
 
-Requests use `fallbacks: "default"`, so if a safety classifier declines a request, it is retried on Anthropic's
-recommended fallback model.
-
-**Cost.** Each day is about 8 Claude calls (1 for prompts, 7 for answer sheets), mostly output tokens, plus one
-short judge call per unique off-sheet answer. Judge verdicts are cached, so repeated answers are free. KV's free plan
-allows 1,000 writes a day. Each new judge verdict is one write, so a busy game will need the Workers Paid plan.
+**Cost:** one Opus call per day for prompts, plus one short Haiku call per unique guess. Repeated guesses come
+from the KV cache. KV's free plan allows 1,000 writes a day, and each new verdict is one write, so a busy game
+needs the Workers Paid plan.
 
 ## Files
 
-- `src/worker.js`: API routes, KV storage, daily cron, admin endpoints
-- `src/llm.js`: Claude calls (prompt writer, answer-sheet builder, judge) with structured JSON output
+- `src/worker.js`: API routes, Daily Dive storage, the validate → score pipeline, cron and admin
+- `src/llm.js`: Claude calls (Daily Dive generator, binary validator) with structured JSON output
+- `public/shared/zipf.js`: sanitization, tokenizing, Zipf rating, percentile → tier and points
+- `public/shared/game-core.js`: dive constants, built-in dives, offline validator, altitude zones
+- `public/freq/`: word-frequency data (CC-BY-SA 4.0, see `public/freq/NOTICE.txt`)
+- `scripts/build-freq.py`: rebuilds `public/freq/` from wordfreq
 - `public/`: the game (`index.html`, `app.js`, `style.css`)
-- `public/shared/game-core.js`: tiers, answer matching and altitude zones, shared by the Worker and the browser
-- `public/shared/seed-bank.js`: hand-written fallback prompts

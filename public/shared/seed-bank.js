@@ -1,9 +1,12 @@
-// Hand-written fallback prompts, used when no LLM-generated puzzle exists for a date
-// (local play, or before ANTHROPIC_API_KEY is configured).
-// Format: [answer, estimatedPercentOfPlayers, ...aliases]
+// Hand-written fallback prompts, used when no LLM-generated Daily Dive exists for a date
+// (local play, or before ANTHROPIC_API_KEY is configured). The answer lists are only used to
+// validate answers when no LLM is available; scoring always comes from corpus word frequency.
+// Format: [answer, legacyPopularityEstimate (unused), ...aliases]
 export const SEED_BANK = [
   {
     q: "Name a planet in our solar system",
+    category: "Planets",
+    criteria: "The answer must be one of the eight planets of our solar system. Pluto is accepted as the former ninth planet. No exoplanets or moons.",
     a: [
       ["Mars", 28], ["Jupiter", 18], ["Saturn", 15], ["Earth", 10], ["Venus", 8],
       ["Mercury", 7], ["Neptune", 6], ["Uranus", 5], ["Pluto (we'll allow it)", 3, "pluto"],
@@ -11,6 +14,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a moon of any planet",
+    category: "Moons",
+    criteria: "The answer must be the proper name of a natural satellite of a planet or dwarf planet in our solar system (Earth’s Moon counts). No artificial satellites, no fictional moons.",
     a: [
       ["The Moon", 30, "moon", "luna", "earths moon"], ["Europa", 12], ["Titan", 12], ["Io", 9],
       ["Ganymede", 8], ["Phobos", 6], ["Callisto", 5], ["Deimos", 4], ["Enceladus", 4],
@@ -24,6 +29,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a constellation",
+    category: "Constellations",
+    criteria: "The answer must be one of the 88 IAU constellations, or a widely recognized asterism such as the Big Dipper. No individual stars.",
     a: [
       ["Orion", 30], ["Ursa Major", 15, "big dipper", "great bear", "plough", "the plough"],
       ["Cassiopeia", 7], ["Ursa Minor", 5, "little dipper", "little bear"], ["Scorpius", 5, "scorpio"],
@@ -41,6 +48,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a famous astronaut or cosmonaut",
+    category: "Astronauts",
+    criteria: "The answer must name a real person who has flown to space as an astronaut, cosmonaut or taikonaut. A surname alone is accepted only if it clearly identifies one such person.",
     a: [
       ["Neil Armstrong", 35, "armstrong"], ["Buzz Aldrin", 18, "aldrin"], ["Yuri Gagarin", 12, "gagarin"],
       ["Sally Ride", 6, "ride"], ["John Glenn", 5, "glenn"], ["Chris Hadfield", 3, "hadfield"],
@@ -61,6 +70,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a space agency or space company",
+    category: "Space organizations",
+    criteria: "The answer must be a real government space agency or a company whose main business is building or launching spacecraft or rockets.",
     a: [
       ["NASA", 45], ["SpaceX", 25, "space x"], ["ESA", 7, "european space agency"], ["Blue Origin", 6],
       ["Roscosmos", 4], ["ISRO", 3, "indian space research organisation"], ["JAXA", 2], ["CNSA", 2, "china national space administration"],
@@ -74,6 +85,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a rocket or launch vehicle",
+    category: "Rockets",
+    criteria: "The answer must be a real rocket or launch vehicle family or model that has flown or is in active development. No missiles used only as weapons, no fictional craft.",
     a: [
       ["Saturn V", 25, "saturn 5", "saturn five"], ["Falcon 9", 18], ["Starship", 15], ["Falcon Heavy", 7],
       ["SLS", 6, "space launch system"], ["Space Shuttle", 6, "shuttle"], ["Soyuz", 5], ["Atlas V", 2, "atlas", "atlas 5"],
@@ -87,6 +100,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a star (other than the Sun)",
+    category: "Stars",
+    criteria: "The answer must be the proper name or catalog designation of a real star or star system other than the Sun.",
     a: [
       ["Polaris", 20, "north star", "pole star"], ["Sirius", 18, "dog star"], ["Betelgeuse", 12],
       ["Alpha Centauri", 8], ["Proxima Centauri", 7, "proxima"], ["Vega", 5], ["Rigel", 5],
@@ -101,6 +116,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name something in space that isn't a planet or a star",
+    category: "Astronomical objects",
+    criteria: "The answer must be a real type of astronomical object or phenomenon (for example comet, nebula, pulsar). Planets, stars and fictional things are not accepted.",
     a: [
       ["Black hole", 25], ["Comet", 15], ["Asteroid", 15], ["Galaxy", 10], ["Nebula", 8],
       ["Meteor", 6, "meteorite", "shooting star"], ["Satellite", 5], ["Space station", 4, "iss"], ["Supernova", 3],
@@ -115,6 +132,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a dwarf planet or an asteroid",
+    category: "Minor bodies",
+    criteria: "The answer must be the name of a real IAU-recognized or widely accepted dwarf planet, or a named asteroid or minor planet.",
     a: [
       ["Pluto", 45], ["Ceres", 18], ["Eris", 8], ["Vesta", 5], ["Makemake", 4], ["Haumea", 4],
       ["Sedna", 2], ["Bennu", 2], ["Pallas", 1.5], ["Apophis", 1.5], ["Eros", 1], ["Psyche", 0.8],
@@ -126,6 +145,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a space mission, telescope or spacecraft",
+    category: "Missions",
+    criteria: "The answer must be a real space mission, space telescope or spacecraft that has flown or is in development. No fictional spacecraft.",
     a: [
       ["Apollo 11", 20], ["Voyager", 15, "voyager 1", "voyager 2"], ["Hubble", 12, "hubble space telescope"],
       ["James Webb", 10, "jwst", "webb", "james webb space telescope"], ["Curiosity", 6], ["Perseverance", 5],
@@ -143,6 +164,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a galaxy",
+    category: "Galaxies",
+    criteria: "The answer must be the name or catalog designation of a real galaxy.",
     a: [
       ["Milky Way", 45], ["Andromeda", 30, "m31"], ["Triangulum", 4, "m33"],
       ["Large Magellanic Cloud", 4, "lmc", "magellanic cloud", "magellanic clouds"], ["Whirlpool", 3, "m51"],
@@ -156,6 +179,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a chemical element found in stars",
+    category: "Elements",
+    criteria: "The answer must be the name of a chemical element on the periodic table that has been detected in or is produced by stars. Chemical symbols alone are not accepted.",
     a: [
       ["Hydrogen", 40], ["Helium", 30], ["Carbon", 6], ["Oxygen", 6], ["Iron", 5], ["Nitrogen", 2],
       ["Neon", 1.5], ["Silicon", 1], ["Magnesium", 1], ["Lithium", 1], ["Sulfur", 0.8, "sulphur"], ["Calcium", 0.8],
@@ -167,6 +192,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a unit or term for distance in astronomy",
+    category: "Units",
+    criteria: "The answer must be a real unit or standard measure used to express distance in astronomy.",
     a: [
       ["Light-year", 50, "light year", "lightyear", "ly"], ["Astronomical unit", 15, "au"], ["Parsec", 15, "pc"],
       ["Kilometre", 5, "kilometer", "km"], ["Mile", 3, "miles"], ["Light-second", 2, "light second"],
@@ -177,6 +204,8 @@ export const SEED_BANK = [
   },
   {
     q: "Name a famous astronomer or space scientist",
+    category: "Scientists",
+    criteria: "The answer must name a real person known for contributions to astronomy, astrophysics, cosmology or rocketry. A surname alone is accepted only if it clearly identifies one such person.",
     a: [
       ["Galileo Galilei", 22, "galileo"], ["Albert Einstein", 12, "einstein"], ["Nicolaus Copernicus", 10, "copernicus"],
       ["Carl Sagan", 9, "sagan"], ["Stephen Hawking", 9, "hawking"], ["Isaac Newton", 8, "newton"],

@@ -1,0 +1,26 @@
+630 vd
+670 vdc
+694 vdi
+695 vds
+712 vdot
+721 vdp
+725 vdd
+728 vda
+730 vdl
+732 vdb
+735 vde vdsl vdv
+736 vdm
+737 vdr
+740 vdo
+756 vday
+759 vdu
+761 vdf
+766 vdsl2
+772 vdj
+773 vdw
+778 vdt
+780 vdh
+781 vdma
+790 vdg
+792 vdare
+795 vdcs

@@ -1,0 +1,58 @@
+535 rc
+580 rca
+595 rcmp
+623 rcs
+635 rcd
+644 rcc
+648 rct
+654 rcp
+657 rcm
+659 rcn
+668 rcr
+670 rcb
+674 rcw
+688 rcts
+693 rci
+694 rch
+701 rcaf
+704 rce
+711 rc00
+712 rcl
+713 rcv
+718 rcf
+721 rc1
+722 rcti
+725 rc4
+726 rcia
+729 rc2
+730 rcra
+734 rco
+736 rcg rcgp
+741 rc's
+742 rc000
+746 rcep
+751 rc3
+760 rc000v rcmp's rcog
+762 rcom rcu
+764 rcx
+766 rcas
+767 rcahms rcvd
+768 rccc rccg
+770 rcap
+771 rc5 rca's rck
+772 rcvs
+774 rccs rchs
+775 rcbs rcz
+781 rctv
+782 rcbc
+783 rc8
+785 rcms rcp0.0
+786 rcn's rcsi
+788 rcds
+790 rc6
+791 rcps
+793 rcac
+795 rcma
+796 rcj rcpt
+798 rcsb
+799 rc7 rcp's rcuk

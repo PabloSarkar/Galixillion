@@ -1,0 +1,7 @@
+Word-frequency data in this directory is derived from wordfreq (https://github.com/rspeer/wordfreq)
+by Robyn Speer, which compiles frequencies from Wikipedia, SUBTLEX, OpenSubtitles, Google Books Ngrams,
+the Leeds Internet Corpus, Twitter, Reddit and other sources (see the wordfreq README for full credits).
+
+The wordfreq data is licensed under Creative Commons Attribution-ShareAlike 4.0
+(https://creativecommons.org/licenses/by-sa/4.0/). These derived files (re-sharded by
+scripts/build-freq.py) are shared under the same license.

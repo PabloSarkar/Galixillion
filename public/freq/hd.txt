@@ -1,0 +1,52 @@
+474 hd
+571 hdmi
+596 hdd hdr
+614 hdtv
+626 hdl
+663 hdp
+664 hdpe
+665 hdi
+678 hdfc
+681 hd00
+683 hdb
+684 hds
+685 hdx
+694 hdc
+696 hdds
+705 hdv
+706 hdt
+707 hd0000
+713 hdcp
+722 hd000
+724 hd2
+725 hdac
+727 hdtvs
+735 hdr00
+737 hdm
+738 hdf
+739 hda
+749 hd's
+750 hdfs hdz
+751 hdlc
+752 hde
+754 hdh
+755 hdn
+756 hdg hdu
+757 hdw
+758 hdhp
+763 hd1
+764 hd3
+768 hdo
+769 hdj
+771 hdk hdls hdri
+772 hdnet
+775 hdcd
+777 hdacs
+779 hdrip
+780 hdbaset
+781 hd7
+782 hdl.handle.net hdms
+784 hdcam
+788 hdac2
+793 hdbk hdd's
+795 hdf5 hdhomerun

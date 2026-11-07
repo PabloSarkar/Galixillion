@@ -1,0 +1,36 @@
+568 lr
+612 lrt
+651 lra
+674 lrc
+679 lrs
+680 lrb
+692 lrp
+714 lrr
+718 lrg
+723 lron
+727 lro
+732 lrn
+733 lrh
+737 lrish lrm
+741 lrv
+743 lru
+746 lr00
+748 lrd
+750 lreland
+752 lrf
+753 lre
+754 lraq
+760 lrad
+763 lr2
+766 lrl
+767 lri
+774 lr3
+776 lr4 lran
+778 lrts
+780 lrrr
+782 lrrk2
+785 lrw
+788 lrom
+796 lrfd lrip lrving
+798 lraqi
+799 lree lris

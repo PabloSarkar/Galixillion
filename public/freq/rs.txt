@@ -1,0 +1,60 @@
+482 rs
+552 rss
+587 rsa
+598 rsvp
+626 rsi
+632 rsl
+633 rsc
+640 rspca
+647 rsv
+652 rst
+653 rspb
+654 rsd
+664 rs000
+670 rsm
+679 rso rsp
+687 rsr
+691 rs00 rsfsr
+694 rse
+697 rsf
+705 rsx
+706 rs3 rsn
+707 rsvps
+713 rsync
+715 rs5
+721 rsvp'd
+723 rs0000 rsquo
+724 rsk
+725 rs1
+726 rs4 rsu
+728 rs6
+730 rsb
+732 rs7
+736 rs2 rsg rsj
+737 rsh
+743 rsw
+744 rsus
+750 rsa's
+756 rspo rstudio
+758 rsna
+763 rsc's
+765 rssi
+768 rsbn
+771 rs0000000 rsps rsvp's
+772 rs00,000
+775 rsac
+776 rsis
+777 rsha
+780 rs0,000 rspec
+781 rsaf rsls
+782 rsvped
+783 rsch
+784 rsrs
+785 rsl's
+786 rspb's
+788 rsos
+789 rsq rsvping
+791 rsv4
+792 rsas rsgb
+795 rscj
+797 rscs rsno

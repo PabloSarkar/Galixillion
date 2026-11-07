@@ -1,0 +1,19 @@
+591 cx
+722 cxc
+725 cxl
+730 cx00
+736 cx000
+737 cxo
+741 cxcr4
+745 cxr
+748 cxx
+757 cxcl00
+761 cxp
+763 cx4
+771 cxm
+772 cx5
+786 cx3 cxi
+788 cxxx
+790 cxt
+795 cxw
+796 cxa

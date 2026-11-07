@@ -1,0 +1,43 @@
+489 rd
+622 rds
+630 rda
+650 rdf
+661 rdp
+663 rdx
+674 rdc
+675 rdr
+685 rdm
+696 rdi
+697 rdna
+701 rdj
+706 rdbms
+707 rdd
+708 rdo
+710 rdio
+711 rdg
+715 rdt
+717 rdu
+721 rdas rdb
+733 rde
+735 rd1
+736 rdl
+740 rd2
+741 rdn
+748 rdma
+751 rd000
+752 rd00 rdr2
+753 rdw
+755 rder
+756 rd's
+758 rdy
+759 rdv
+770 rdcs rdh
+777 rdns
+778 rdta
+781 rd3
+785 rda's rdfa
+786 rdfs
+789 rd4
+792 rdms rdos
+795 rdk
+798 rdps

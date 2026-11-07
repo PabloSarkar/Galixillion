@@ -1,0 +1,49 @@
+497 gps
+512 gp
+546 gpa
+578 gpu
+626 gpl
+633 gpus
+640 gpo
+641 gpm
+661 gpt
+668 gp2
+669 gp00
+670 gpc
+675 gprs
+676 gpi
+683 gp's gp000
+687 gpas gpp
+689 gpd
+695 gpr
+701 gpg
+705 gp3
+709 gpe
+714 gpx
+715 gpcr
+719 gpio
+721 gpr00
+725 gph
+727 gpb gpcrs
+732 gpf
+742 gpa's gpib
+746 gpos
+748 gpw
+749 gpu's
+751 gpro
+752 gpgpu
+754 gplv3
+760 gpss
+762 gplv2
+764 gpk
+765 gparted gpn
+770 gpra
+773 gpon
+780 gpac gplus gpmg
+781 gpps
+786 gp1
+789 gp0000
+791 gpo's
+794 gps's
+798 gper
+799 gpif

@@ -1,0 +1,74 @@
+521 cp
+528 cpu
+558 cpr
+559 cps
+572 cpi
+576 cpa
+584 cpc
+591 cpl
+610 cpt cpus
+614 cpp
+618 cpm
+620 cpd
+647 cpg
+648 cp3 cpo
+652 cpe
+653 cpac
+654 cpap
+656 cpsu
+670 cp00
+673 cpsc
+674 cpb
+679 cpas
+682 cpf
+686 cph
+693 cpj
+697 cpn cpv
+701 cpk
+703 cpec cpu's
+709 cppcc
+711 cpcs
+712 cp's
+714 cpanel
+721 cp0000
+723 cp000
+724 cpw
+725 cpuc
+727 cpusa
+728 cpy
+732 cprs
+736 cpa's
+739 cpx
+740 cpim cpms
+741 cpvc
+744 cpsa
+746 cpan
+747 cp1 cpre
+751 cpc's
+752 cp9
+753 cpython
+755 cpgb
+756 cpos
+758 cpgs cpps
+760 cppa
+761 cp2
+763 cplr cpq
+770 cpes
+772 cpoe
+773 cpni cppib cpz
+775 cpic
+776 cpbl
+777 cplp cptsd
+779 cpss
+780 cp4 cpcu cpd's cpdm cpds
+785 cpls
+786 cpat
+787 cpcc cphc cpr's cpsp
+788 cpj's cpp's cptpp cpwd
+789 cpac's cplex cpts
+790 cp5 cprc
+792 cppd
+793 cpcb
+796 cpag cphi cprf cpst
+797 cpdna cpuid
+799 cpi's cpio cpm's cpns cpted

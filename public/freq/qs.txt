@@ -1,0 +1,15 @@
+603 qs
+709 qso
+720 qsl
+723 qsr
+730 qst
+750 qsc
+752 qsar qss
+756 qsi
+762 qsa
+764 qsos
+773 qsfp
+776 qsp
+781 qsymia
+785 qse
+790 qsb

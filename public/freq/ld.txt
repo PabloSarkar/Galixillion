@@ -1,0 +1,35 @@
+563 ld
+578 lds
+608 ldl
+632 ldp
+639 ldr
+663 lda
+668 ld00
+675 ldc
+677 ldh
+680 ldap
+686 ldf
+693 ldn
+703 ldpe
+716 ldv
+717 ldcs
+721 ldb
+728 ldd
+730 ldk
+732 ldrs
+734 ldt
+738 ldm ldo
+741 ldi
+745 lde
+747 ld's ldpr
+749 ldw
+760 ldg
+761 ldlc
+764 ldu
+771 ldpc
+774 ldos ldp's
+782 ldlr
+790 lding
+794 ldls
+797 ld3
+799 ldx
