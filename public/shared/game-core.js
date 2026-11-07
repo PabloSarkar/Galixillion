@@ -1,12 +1,13 @@
 // Shared by the Cloudflare Worker (server-side scoring) and the browser (offline fallback).
-import { SEED_BANK } from "./seed-bank.js";
+import { SEED_BANK, TOPICS } from "./seed-bank.js";
 
 export const PROMPTS_PER_DAY = 7;
 export const ROUND_SECONDS = 25;
 export const MAX_SCORE = PROMPTS_PER_DAY * 100;
 
 // ---------- Answer matching ----------
-const STRIP_WORDS = ["space telescope", "telescope", "constellation", "galaxy", "spacecraft", "rocket", "rover", "mission", "probe", "the", "a", "an"];
+// Filler words ignored when matching ("Mount Fuji" = "Fuji", "the Battle of Hastings" = "Hastings").
+const STRIP_WORDS = ["the", "a", "an", "of", "mount", "mt", "river", "battle", "empire", "dynasty", "civilization", "ancient", "king", "queen", "volcano"];
 
 export function normalize(s) {
   return String(s).toLowerCase()
@@ -84,7 +85,7 @@ export function seedPrompt(entry, id) {
     prompt: entry.q,
     category: entry.category,
     strict_criteria: entry.criteria,
-    answers: entry.a.map(([answer, , ...aliases]) => ({ answer, aliases })),
+    answers: entry.a.map((x) => (Array.isArray(x) ? { answer: x[0], aliases: x.slice(1) } : { answer: x, aliases: [] })),
   };
 }
 
@@ -92,7 +93,11 @@ export function seedPuzzle(date) {
   const rand = seededRandom(hashString(date));
   const pool = SEED_BANK.slice();
   for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-  return { v: 2, date, source: "seed", status: "live", prompts: pool.slice(0, PROMPTS_PER_DAY).map((e, i) => seedPrompt(e, seedId(date, i))) };
+  // One prompt from each topic, then fill the rest from whatever is left.
+  const picked = [];
+  for (const topic of TOPICS) { const e = pool.find((x) => x.topic === topic && !picked.includes(x)); if (e) picked.push(e); }
+  for (const e of pool) if (picked.length < PROMPTS_PER_DAY && !picked.includes(e)) picked.push(e);
+  return { v: 2, date, source: "seed", status: "live", prompts: picked.slice(0, PROMPTS_PER_DAY).map((e, i) => seedPrompt(e, seedId(date, i))) };
 }
 
 // ---------- Altitude ----------

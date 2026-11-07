@@ -6,8 +6,17 @@ import { PROMPTS_PER_DAY } from "../public/shared/game-core.js";
 
 const GENERATOR_MODEL = "claude-opus-5-5";
 const VALIDATOR_MODEL = "claude-haiku-5-5"; // fast and inexpensive; runs on every guess
-const DEFAULT_THEME =
-  "space, astronomy, rocketry, astronauts, science fiction and the cosmos, mixed with everyday-meets-space prompts";
+// One prompt per topic, plus one wildcard from any topic.
+const TOPICS = {
+  "Geography & Culture": ["Name a landlocked country in Europe", "Name a capital city in Africa", "Name a country where French is an official language"],
+  "Food & Drink": ["Name a type of cheese", "Name a pasta shape", "Name a cocktail"],
+  "Pop Culture & Entertainment": ["Name a sitcom set in New York City", "Name an actor who has played Batman in live action", "Name a fictional wizard, witch or sorcerer"],
+  "Geography & Nature": ["Name a volcano", "Name a marsupial or an egg-laying mammal", "Name a river in Europe"],
+  "History & Society": ["Name an ancient civilization or empire", "Name a famous battle", "Name a sport that has been in the Olympics"],
+  "Science & Tech": ["Name a chemical element named after a person", "Name a programming language", "Name a bone in the human body"],
+};
+const DEFAULT_THEME = "general trivia. Use exactly one prompt from each of these topics, plus one more from any topic:\n" +
+  Object.entries(TOPICS).map(([t, ex]) => `- ${t} (style examples, do not reuse: ${ex.join("; ")})`).join("\n");
 
 const str = { type: "string" };
 const obj = (properties) => ({ type: "object", properties, required: Object.keys(properties), additionalProperties: false });
@@ -56,7 +65,7 @@ export async function generateDive(env, { date, avoid = [] }) {
     messages: [{
       role: "user",
       content:
-        `Write exactly ${PROMPTS_PER_DAY} prompts for the ${date} Daily Dive. Theme: ${env.THEME || DEFAULT_THEME}.\n` +
+        `Write exactly ${PROMPTS_PER_DAY} prompts for the ${date} Daily Dive. Theme: ${env.THEME || DEFAULT_THEME}\n` +
         "All 7 must be in different categories.\n" +
         (avoid.length ? `Do not repeat or closely paraphrase these recent prompts:\n${avoid.map((p) => `- ${p}`).join("\n")}` : ""),
     }],

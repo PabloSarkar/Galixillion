@@ -41,9 +41,10 @@ const api = {
   },
   async answer(date, index, answer) {
     if (this.offline) {
-      const clean = sanitize(answer);
-      if (!matchAnswer(this.local.prompts[index], clean)) return { valid: false, reason: "Not on our star charts." };
-      return { valid: true, answer: clean, ...(await scoreAnswer(this.freq, clean)) };
+      const hit = matchAnswer(this.local.prompts[index], sanitize(answer));
+      if (!hit) return { valid: false, reason: "Not on our answer list." };
+      const canonical = sanitize(hit.answer); // score the correct spelling, not a forgiven typo
+      return { valid: true, answer: canonical, ...(await scoreAnswer(this.freq, canonical)) };
     }
     const r = await fetch("/api/answer", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ date, index, answer }) });
     if (!r.ok) return { valid: false, reason: "Signal lost. Try again." };
@@ -182,9 +183,8 @@ function renderLadder(yourTier) {
   $("ladder").innerHTML = RARITY_TIERS.slice().reverse().map((t) => {
     const cls = [t.id === yourTier ? "you" : "", t.id === 6 ? "gem" : ""].join(" ");
     return `<li class="${cls}"><span>${escapeHtml(t.name)}${t.id === yourTier ? " (you)" : ""}</span><span class="pts">${t.min}–${t.max}</span>
-      <span class="examples">${escapeHtml(t.band)}</span></li>`;
+</li>`;
   }).join("");
-  $("reveal-total").textContent = "Scored by how rarely your answer's words appear in English text (wordfreq corpus).";
 }
 
 function endGame() {

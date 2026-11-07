@@ -73,7 +73,11 @@ async function createDive(env, date) {
 async function validate(env, ctx, request, item, answer) {
   // No LLM configured: built-in prompts carry an answer list that can validate offline.
   if (!env.ANTHROPIC_API_KEY) {
-    if (item.answers) return matchAnswer(item, answer) ? { valid: true } : { valid: false, reason: "Not on our star charts." };
+    if (item.answers) {
+      const hit = matchAnswer(item, answer);
+      // Score the correct spelling, so a forgiven typo isn't mistaken for a rare word.
+      return hit ? { valid: true, canonical: sanitize(hit.answer) } : { valid: false, reason: "Not on our answer list." };
+    }
     return { valid: false, reason: "The validator isn't configured.", unavailable: true };
   }
 
@@ -132,8 +136,9 @@ async function postAnswer(env, request, ctx) {
   if (!verdict.valid) return json({ valid: false, prompt_id: item.id, reason: verdict.reason, retry: true });
 
   // Scoring: Zipf frequency → percentile → tier badge + points.
-  const score = await scoreAnswer(frequency(env), answer);
-  return json({ valid: true, prompt_id: item.id, answer, ...score });
+  const scored = verdict.canonical || answer;
+  const score = await scoreAnswer(frequency(env), scored);
+  return json({ valid: true, prompt_id: item.id, answer: scored, ...score });
 }
 
 // ---------- Admin API (review pass) ----------

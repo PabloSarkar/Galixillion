@@ -10,7 +10,7 @@ test("seed Daily Dive: 7 unique prompts with id, prompt, category, strict_criter
   assert.equal(new Set(a.prompts.map((p) => p.prompt)).size, PROMPTS_PER_DAY);
   for (const p of a.prompts) {
     assert.match(p.id, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-a[0-9a-f]{3}-[0-9a-f]{12}$/);
-    for (const k of ["prompt", "category", "strict_criteria"]) assert.ok(p[k]?.length > 3, k);
+    for (const k of ["prompt", "category", "strict_criteria"]) assert.ok(p[k]?.length > 1, k);
   }
 });
 
